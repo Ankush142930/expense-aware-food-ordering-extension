@@ -1,0 +1,36 @@
+{
+    "manifest_version": 3,
+    "name": "BudgetBite",
+    "short_name": "bBite",
+    "version": "0.1.0",
+    "description": "A Chrome extension that injects a budget-awareness widget into Swiggy's web checkout so users see how much of their monthly food budget remains before they place an order.",
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "action": {
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png"
+        },
+        "default_popup": "popup.html",
+        "default_title": "Check your food budget!!!"
+    },
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://*.swiggy.com/*"],
+            "js": ["content.js"],
+            "run_at": "document_idle"
+        }
+    ], 
+    "permissions": ["storage", "identity", "scripting", "tabs"],
+    "host_permissions": ["https://*.swiggy.com/*", "https://mcp.swiggy.com/*"],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
+}
