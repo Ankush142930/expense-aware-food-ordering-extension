@@ -12,7 +12,7 @@ Food delivery apps are designed to encourage impulse purchases. Swiggy has no na
 
 ## Solution
 
-Before you tap **Place Order**, the extension shows a clear budget warning on the cart page—for example:
+Before you complete checkout on Swiggy (`/checkout`), the extension shows a clear budget warning on the order summary—for example:
 
 > This ₹420 order will leave you with ₹180 of your ₹2,000 monthly budget.
 
@@ -34,7 +34,7 @@ Users set a monthly food budget in the extension popup. The banner combines that
 │  │ Content      │  │ Service Worker  │  │ Popup              │  │
 │  │ Script       │  │ (background)    │  │                    │  │
 │  │ Budget banner│◄─┤ OAuth 2.1 PKCE  │  │ Set monthly budget │  │
-│  │ on cart page │  │ MCP API proxy   │  │ Spend summary      │  │
+│  │ on checkout  │  │ MCP API proxy   │  │ Spend summary      │  │
 │  └──────┬───────┘  └────────┬────────┘  └────────────────────┘  │
 │         │                   │                                    │
 │         │    chrome.runtime.sendMessage                        │
@@ -88,7 +88,7 @@ npm run build
 1. Open `chrome://extensions`
 2. Enable **Developer mode**
 3. Click **Load unpacked** → select `extension/dist`
-4. Open [swiggy.com](https://www.swiggy.com), add items to cart, and confirm the budget banner appears
+4. Open [swiggy.com](https://www.swiggy.com), add items, open checkout (`/checkout`), and confirm the budget banner appears
 
 ### Development (watch mode)
 
