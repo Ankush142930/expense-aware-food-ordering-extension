@@ -1,0 +1,45 @@
+/* All styles scoped inside Shadow DOM — no conflict with Swiggy */
+:host { display: block; font-family: 'Inter', -apple-system, sans-serif; }
+
+.bb-banner {
+  margin: 12px 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #1a1a2e;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e2e8f0;
+  font-size: 13px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.bb-safe     { border-left: 3px solid #22c55e; }
+.bb-warning  { border-left: 3px solid #f59e0b; }
+.bb-critical { border-left: 3px solid #ef4444; animation: bb-pulse 2s infinite; }
+
+@keyframes bb-pulse {
+  0%, 100% { border-left-color: #ef4444; }
+  50%       { border-left-color: #fca5a5; }
+}
+
+.bb-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.bb-icon  { font-size: 16px; }
+.bb-label { font-weight: 600; font-size: 13px; flex: 1; }
+.bb-powered { font-size: 10px; color: #64748b; }
+
+.bb-row {
+  display: flex; justify-content: space-between;
+  padding: 4px 0; color: #94a3b8;
+}
+.bb-row--highlight { color: #e2e8f0; font-weight: 600; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 6px; padding-top: 8px; }
+.bb-amount { font-variant-numeric: tabular-nums; }
+
+.bb-progress {
+  height: 4px; background: rgba(255,255,255,0.08);
+  border-radius: 2px; margin-top: 12px; overflow: hidden;
+}
+.bb-progress-bar { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+.bb-progress-label { font-size: 10px; color: #64748b; margin-top: 4px; text-align: right; }
+
+.bb-loading, .bb-error { color: #94a3b8; font-size: 12px; padding: 8px; }
