@@ -49,7 +49,7 @@ function hasOrderSummary() {
         text.includes('TO PAY') ||
         text.includes('Bill Details') ||
         text.includes('Item Total')
-    )
+    );
 }
 
 /**
@@ -126,6 +126,7 @@ function unmountBanner() {
     if(existing) existing.remove();
 }
 
+// Watch for DOM changes (SPA navigation)
 const observer = new MutationObserver(() => {
     if(isCheckoutPage()) {
         mountBanner();
@@ -135,3 +136,6 @@ const observer = new MutationObserver(() => {
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
+
+// Also try on initial load
+mountBanner();
