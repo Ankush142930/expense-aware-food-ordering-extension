@@ -1,0 +1,74 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body, .popup {
+  width: 360px;
+  min-height: 200px;
+  background: #0f0f1a;
+  color: #e2e8f0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+}
+
+.popup { padding: 0 0 8px; }
+
+/* Header */
+.popup-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+.popup-logo { font-size: 24px; }
+.popup-title { font-size: 15px; font-weight: 700; color: #f1f5f9; }
+.popup-subtitle { font-size: 10px; color: #64748b; margin-top: 1px; }
+.popup-status { font-size: 10px; margin-left: auto; padding: 3px 8px; border-radius: 20px; flex-shrink: 0; white-space: nowrap; }
+.popup-header > div:nth-child(2) { min-width: 0; flex: 1; }
+.popup-status.connected { color: #22c55e; background: rgba(34,197,94,0.1); }
+.popup-status.disconnected { color: #64748b; background: rgba(100,116,139,0.1); }
+
+/* Sections */
+.popup-section { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.popup-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+.popup-section > .popup-label { display: block; margin-bottom: 8px; }
+.popup-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 16px;
+  margin-bottom: 8px;
+}
+.popup-label-row .popup-label { margin-bottom: 0; }
+
+/* Budget Input */
+.popup-input-wrap { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; transition: border-color 0.2s; }
+.popup-input-wrap:focus-within { border-color: rgba(99,102,241,0.5); }
+.popup-currency { font-size: 16px; color: #94a3b8; font-weight: 600; flex-shrink: 0; }
+.popup-input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: #f1f5f9; font-size: 20px; font-weight: 700; font-family: inherit; }
+.popup-saved { flex-shrink: 0; font-size: 11px; font-weight: 600; color: #22c55e; white-space: nowrap; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateX(4px); } to { opacity: 1; } }
+
+/* Stats */
+.popup-stats { display: flex; gap: 4px; margin-bottom: 12px; }
+.popup-stat { flex: 1; min-width: 0; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 10px 6px; text-align: center; }
+.popup-stat-value { display: block; font-size: 14px; font-weight: 700; color: #f1f5f9; }
+.popup-stat-label { display: block; font-size: 10px; color: #64748b; margin-top: 2px; }
+
+/* Progress */
+.popup-progress-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.popup-progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+.popup-progress-label { font-size: 10px; color: #64748b; margin-top: 6px; text-align: right; }
+
+/* Buttons */
+.popup-btn { width: 100%; padding: 10px; border-radius: 8px; border: none; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.popup-btn--primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
+.popup-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(99,102,241,0.3); }
+.popup-btn--secondary { background: rgba(255,255,255,0.05); color: #64748b; border: 1px solid rgba(255,255,255,0.08); }
+.popup-btn--secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+.popup-badge { font-size: 9px; background: rgba(99,102,241,0.2); color: #818cf8; padding: 2px 6px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+.popup-hint { font-size: 12px; color: #22c55e; text-align: center; margin-top: 8px; }
+.popup-hint-muted { font-size: 11px; color: #64748b; text-align: center; margin-top: 6px; line-height: 1.4; }
+
+/* Footer */
+.popup-footer { padding: 12px 16px 4px; text-align: center; }
+.popup-reset { background: none; border: none; color: #475569; font-size: 11px; cursor: pointer; text-decoration: underline; }
+.popup-reset:hover { color: #ef4444; }
