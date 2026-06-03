@@ -14,13 +14,76 @@ export default function BudgetBanner() {
 
     // Load budget setting from chrome.storage.sync
     useEffect(() => {
-        if(typeof chrome !== 'undefined' && chrome.storage) {
-            chrome.storage.sync.get(['monthlyBudget'], (result) => {
-                if(result.monthlyBudget) {
-                    setData(prev => ({ ...prev, monthlyBudget: result.monthlyBudget }));
+        if(typeof chrome === 'undefined' || !chrome.storage) return;
+
+        chrome.storage.sync.get(['swiggyConnected', 'monthlyBudget'], (settings) => {
+            if(settings.monthlyBudget) {
+                setData((prev) => ({ ...prev, monthlyBudget: settings.monthlyBudget}));
+            }
+
+            if(!settings.swiggyConnected){
+                setData((prev) => ({ ...prev, loading: false}));
+                return;
+            }
+
+            setData((prev) => ({ ...prev, loading: true, error: null}));
+
+            chrome.runtime.sendMessage({ type: 'GET_CART' }, (cartResponse) => {
+                if(chrome.runtime.lastError){
+                    setData((prev) => ({
+                        ...prev, 
+                        loading: false,
+                        error: chrome.runtime.lastError.message,
+                    }))
+                    return;
                 }
-            });
-        }
+
+                if(cartResponse?.reauth){
+                    setData((prev) => ({
+                        ...prev,
+                        loading: false,
+                        error: 'Session expired — connect Swiggy in the extension popup',
+                    }));
+                    return;
+                }
+
+                chrome.runtime.sendMessage({ type: 'GET_ORDERS' }, (ordersResponse) => {
+                    if(chrome.runtime.lastError){
+                        setData((prev) => ({
+                            ...prev,
+                            loading: false,
+                            error: chrome.runtime.lastError.message,
+                        }));
+                        return;
+                    }
+
+                    if(ordersResponse?.reauth){
+                        setData((prev) => ({
+                            ...prev,
+                            loading: false,
+                            error: 'Session expired — connect Swiggy in the extension popup',
+                        }));
+                        return;
+                    }
+
+                    if(cartResponse?.success && ordersResponse?.success){
+                        setData((prev) => ({
+                            ...prev,
+                            loading: false,
+                            error: null,
+                            cartTotal: cartResponse.data?.total ?? prev.cartTotal,
+                            spentSoFar: ordersResponse.data?.totalSpent ?? prev.spentSoFar,
+                        }));
+                    } else{
+                        setData((prev) => ({
+                            ...prev,
+                            loading: false,
+                            error: cartResponse?.error || ordersResponse?.error || 'Could not load budget data',
+                        }))
+                    }
+                })
+            })
+        })
     }, []);
 
     const { cartTotal, monthlyBudget, spentSoFar, loading, error } = data;
@@ -40,7 +103,13 @@ export default function BudgetBanner() {
     };
 
     if(loading) return <div className="bb-banner bb-loading">Loading budget data…</div>;
-    if(error) return <div className="bb-banner bb-error">⚠️ Could not load budget data</div>;
+    if(error) {
+        return (
+            <div className="bb-banner bb-error">
+                ⚠️ {error}
+            </div>
+        )
+    }
 
     return (
         <div className={`bb-banner bb-${state}`}>
