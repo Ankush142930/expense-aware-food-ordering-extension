@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import BudgetBanner from './BudgetBanner';
+import bannerStyles from './content.css?inline';
 
 const BANNER_ID = 'budgetbite-banner-root';
 
@@ -105,9 +106,14 @@ function mountBanner() {
 
     const host = document.createElement('div');
     host.id = BANNER_ID;
-    host.style.cssText = 'all: initial; display: block;';
+    host.style.cssText = 'display: block; width: 100%; box-sizing: border-box;';
 
     const shadow = host.attachShadow({ mode: 'open' });
+
+    const styleEl = document.createElement('style');
+    styleEl.textContent = bannerStyles;
+    shadow.appendChild(styleEl);
+
     const container = document.createElement('div');
     shadow.appendChild(container);
 

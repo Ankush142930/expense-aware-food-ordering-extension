@@ -33,7 +33,17 @@ module.exports = (env, argv) => ({
             }, 
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
+                oneOf: [
+                    // Content script Shadow DOM — export CSS string, inject in shadow root
+                    {
+                        resourceQuery: /inline/,
+                        type: 'asset/source',
+                    },
+                    // Popup and other extension pages — inject into document head
+                    {
+                        use: ['style-loader', 'css-loader'],
+                    },
+                ],
             }
         ]
     }, 

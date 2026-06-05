@@ -1,45 +1,185 @@
-/* All styles scoped inside Shadow DOM — no conflict with Swiggy */
-:host { display: block; font-family: 'Inter', -apple-system, sans-serif; }
+/* BudgetBite banner — popup-aligned dark theme (Shadow DOM) */
+:host {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
 
-.bb-banner {
-  margin: 12px 0;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: #1a1a2e;
-  border: 1px solid rgba(255,255,255,0.08);
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.bb-card {
+  margin: 14px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0f0f1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
   color: #e2e8f0;
   font-size: 13px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  line-height: 1.45;
 }
 
-.bb-safe     { border-left: 3px solid #22c55e; }
-.bb-warning  { border-left: 3px solid #f59e0b; }
-.bb-critical { border-left: 3px solid #ef4444; animation: bb-pulse 2s infinite; }
-
-@keyframes bb-pulse {
-  0%, 100% { border-left-color: #ef4444; }
-  50%       { border-left-color: #fca5a5; }
-}
-
+/* Header — matches popup-header gradient */
 .bb-header {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
-.bb-icon  { font-size: 16px; }
-.bb-label { font-weight: 600; font-size: 13px; flex: 1; }
-.bb-powered { font-size: 10px; color: #64748b; }
 
-.bb-row {
-  display: flex; justify-content: space-between;
-  padding: 4px 0; color: #94a3b8;
+.bb-logo { font-size: 20px; line-height: 1; flex-shrink: 0; }
+
+.bb-brand {
+  flex: 1;
+  min-width: 0;
 }
-.bb-row--highlight { color: #e2e8f0; font-weight: 600; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 6px; padding-top: 8px; }
-.bb-amount { font-variant-numeric: tabular-nums; }
 
-.bb-progress {
-  height: 4px; background: rgba(255,255,255,0.08);
-  border-radius: 2px; margin-top: 12px; overflow: hidden;
+.bb-brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.2;
 }
-.bb-progress-bar { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
-.bb-progress-label { font-size: 10px; color: #64748b; margin-top: 4px; text-align: right; }
 
-.bb-loading, .bb-error { color: #94a3b8; font-size: 12px; padding: 8px; }
+.bb-brand-sub {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 1px;
+}
+
+.bb-status {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.bb-safe .bb-status {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.bb-warning .bb-status {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.bb-critical .bb-status {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* Body */
+.bb-body {
+  padding: 14px;
+}
+
+.bb-message {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f5f9;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+/* Stats — matches popup-stats */
+.bb-stats {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.bb-stat {
+  flex: 1;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.bb-stat-value {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+  font-variant-numeric: tabular-nums;
+}
+
+.bb-stat-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 3px;
+}
+
+.bb-safe .bb-stat--highlight .bb-stat-value { color: #22c55e; }
+.bb-warning .bb-stat--highlight .bb-stat-value { color: #f59e0b; }
+.bb-critical .bb-stat--highlight .bb-stat-value { color: #ef4444; }
+
+/* Progress — matches popup-progress */
+.bb-progress-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bb-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bb-safe .bb-progress-fill { background: #22c55e; }
+.bb-warning .bb-progress-fill { background: #f59e0b; }
+.bb-critical .bb-progress-fill { background: #ef4444; }
+
+.bb-progress-label {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 6px;
+  text-align: right;
+}
+
+.bb-foot {
+  padding: 10px 14px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.bb-foot strong {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* Loading / error */
+.bb-card.bb-loading,
+.bb-card.bb-error {
+  padding: 16px 14px;
+}
+
+.bb-loading .bb-notice-body,
+.bb-error .bb-notice-body {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.bb-error .bb-notice-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ef4444;
+  margin-bottom: 6px;
+}
