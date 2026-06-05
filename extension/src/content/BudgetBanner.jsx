@@ -1,44 +1,42 @@
 import { useState, useEffect } from 'react';
-import './content.css';
 
 const DEFAULT_BUDGET = 2200;
 
 export default function BudgetBanner() {
     const [data, setData] = useState({
-        cartTotal: 420,  // TODO: replace mock data with real data
+        cartTotal: 280,
         monthlyBudget: DEFAULT_BUDGET,
-        spentSoFar: 1200, // TODO: replace mock data with real data
+        spentSoFar: 1200,
         loading: false,
         error: null,
-    })
+    });
 
-    // Load budget setting from chrome.storage.sync
     useEffect(() => {
-        if(typeof chrome === 'undefined' || !chrome.storage) return;
+        if (typeof chrome === 'undefined' || !chrome.storage) return;
 
         chrome.storage.sync.get(['swiggyConnected', 'monthlyBudget'], (settings) => {
-            if(settings.monthlyBudget) {
-                setData((prev) => ({ ...prev, monthlyBudget: settings.monthlyBudget}));
+            if (settings.monthlyBudget) {
+                setData((prev) => ({ ...prev, monthlyBudget: settings.monthlyBudget }));
             }
 
-            if(!settings.swiggyConnected){
-                setData((prev) => ({ ...prev, loading: false}));
+            if (!settings.swiggyConnected) {
+                setData((prev) => ({ ...prev, loading: false }));
                 return;
             }
 
-            setData((prev) => ({ ...prev, loading: true, error: null}));
+            setData((prev) => ({ ...prev, loading: true, error: null }));
 
             chrome.runtime.sendMessage({ type: 'GET_CART' }, (cartResponse) => {
-                if(chrome.runtime.lastError){
+                if (chrome.runtime.lastError) {
                     setData((prev) => ({
-                        ...prev, 
+                        ...prev,
                         loading: false,
                         error: chrome.runtime.lastError.message,
-                    }))
+                    }));
                     return;
                 }
 
-                if(cartResponse?.reauth){
+                if (cartResponse?.reauth) {
                     setData((prev) => ({
                         ...prev,
                         loading: false,
@@ -48,7 +46,7 @@ export default function BudgetBanner() {
                 }
 
                 chrome.runtime.sendMessage({ type: 'GET_ORDERS' }, (ordersResponse) => {
-                    if(chrome.runtime.lastError){
+                    if (chrome.runtime.lastError) {
                         setData((prev) => ({
                             ...prev,
                             loading: false,
@@ -57,7 +55,7 @@ export default function BudgetBanner() {
                         return;
                     }
 
-                    if(ordersResponse?.reauth){
+                    if (ordersResponse?.reauth) {
                         setData((prev) => ({
                             ...prev,
                             loading: false,
@@ -66,7 +64,7 @@ export default function BudgetBanner() {
                         return;
                     }
 
-                    if(cartResponse?.success && ordersResponse?.success){
+                    if (cartResponse?.success && ordersResponse?.success) {
                         setData((prev) => ({
                             ...prev,
                             loading: false,
@@ -74,16 +72,19 @@ export default function BudgetBanner() {
                             cartTotal: cartResponse.data?.total ?? prev.cartTotal,
                             spentSoFar: ordersResponse.data?.totalSpent ?? prev.spentSoFar,
                         }));
-                    } else{
+                    } else {
                         setData((prev) => ({
                             ...prev,
                             loading: false,
-                            error: cartResponse?.error || ordersResponse?.error || 'Could not load budget data',
-                        }))
+                            error:
+                                cartResponse?.error ||
+                                ordersResponse?.error ||
+                                'Could not load budget data',
+                        }));
                     }
-                })
-            })
-        })
+                });
+            });
+        });
     }, []);
 
     const { cartTotal, monthlyBudget, spentSoFar, loading, error } = data;
@@ -91,60 +92,100 @@ export default function BudgetBanner() {
     const afterOrder = remaining - cartTotal;
     const percentUsed = Math.min(((spentSoFar + cartTotal) / monthlyBudget) * 100, 100);
 
-    const state = afterOrder > monthlyBudget * 0.4 ? 'safe' 
-                  : afterOrder > monthlyBudget * 0.1 ? 'warning' 
-                  : 'critical';
+    const state =
+        afterOrder > monthlyBudget * 0.4
+            ? 'safe'
+            : afterOrder > monthlyBudget * 0.1
+              ? 'warning'
+              : 'critical';
 
-    // State configuration for the banner
+    const fmt = (n) => `₹${n}`;
+
     const stateConfig = {
-        safe: { icon: '✅', label: 'Within Budget', color: '#22c55e' },
-        warning: { icon: '⚠️', label: 'Budget Running Low', color: '#f59e0b' },
-        critical: { icon: '🔴', label: 'Budget Exceeded', color: '#ef4444' },
+        safe: {
+            status: 'Within budget',
+            message: 'This order keeps you within your monthly food budget',
+        },
+        warning: {
+            status: 'Running low',
+            message: 'You are close to your monthly food budget limit',
+        },
+        critical: {
+            status: 'Over budget',
+            message: 'This order may exceed your monthly food budget',
+        },
     };
 
-    if(loading) return <div className="bb-banner bb-loading">Loading budget data…</div>;
-    if(error) {
+    if (loading) {
         return (
-            <div className="bb-banner bb-error">
-                ⚠️ {error}
+            <div className="bb-card bb-loading">
+                <p className="bb-notice-body">Loading your budget details…</p>
             </div>
-        )
+        );
     }
 
-    return (
-        <div className={`bb-banner bb-${state}`}>
-            <div className="bb-header">
-                <span className="bb-icon">{stateConfig[state].icon}</span>
-                <span className="bb-label">{stateConfig[state].label}</span>
-                <span className="bb-powered">BudgetBite</span>
+    if (error) {
+        return (
+            <div className="bb-card bb-error">
+                <p className="bb-notice-title">Could not load budget details</p>
+                <p className="bb-notice-body">{error}</p>
             </div>
+        );
+    }
+
+    const { status, message } = stateConfig[state];
+    const highlightValue =
+        afterOrder >= 0 ? fmt(afterOrder) : `-${fmt(Math.abs(afterOrder))}`;
+
+    return (
+        <article className={`bb-card bb-${state}`} aria-label="Monthly food budget">
+            <header className="bb-header">
+                <span className="bb-logo" aria-hidden="true">🍽️</span>
+                <div className="bb-brand">
+                    <div className="bb-brand-name">BudgetBite</div>
+                    <div className="bb-brand-sub">Expense-aware ordering</div>
+                </div>
+                <span className="bb-status">{status}</span>
+            </header>
 
             <div className="bb-body">
-                <div className="bb-row">
-                    <span>This order</span>
-                    <span className="bb-amount">₹ {cartTotal}</span>
+                <p className="bb-message">{message}</p>
+
+                <div className="bb-stats">
+                    <div className="bb-stat">
+                        <span className="bb-stat-value">{fmt(cartTotal)}</span>
+                        <span className="bb-stat-label">This order</span>
+                    </div>
+                    <div className="bb-stat">
+                        <span className="bb-stat-value">{fmt(spentSoFar)}</span>
+                        <span className="bb-stat-label">Spent</span>
+                    </div>
+                    <div className="bb-stat bb-stat--highlight">
+                        <span className="bb-stat-value">{highlightValue}</span>
+                        <span className="bb-stat-label">After order</span>
+                    </div>
                 </div>
-                <div className="bb-row">
-                    <span>Spent this month</span>
-                    <span className="bb-amount">₹ {spentSoFar}</span>
+
+                <div
+                    className="bb-progress-track"
+                    role="progressbar"
+                    aria-valuenow={percentUsed}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                >
+                    <div className="bb-progress-fill" style={{ width: `${percentUsed}%` }} />
                 </div>
-                <div className="bb-row bb-row--highlight">
-                    <span>Remaining after order</span>
-                    <span className="bb-amount" style={{ color: stateConfig[state].color }}>
-                        {afterOrder >= 0 ? `₹${afterOrder}` : `-₹${Math.abs(afterOrder)}`}
-                    </span>
-                </div>
+                <p className="bb-progress-label">
+                    {Math.round(percentUsed)}% of {fmt(monthlyBudget)} monthly budget used
+                </p>
             </div>
-            <div className="bb-progress">
-                <div 
-                    className="bb-progress-bar"
-                    style={{ width: `${percentUsed}%`, background: stateConfig[state].color }}
-                />
-            </div>
-            <div className="bb-progress-label">
-                {Math.round(percentUsed)}% of ₹{monthlyBudget} monthly budget used after this order
-            </div>
-        </div>
+
+            <footer className="bb-foot">
+                <strong>Note:</strong> Budget is tracked from your extension settings
+                {afterOrder < 0
+                    ? ` — you may be ${fmt(Math.abs(afterOrder))} over after checkout.`
+                    : ` — ${fmt(afterOrder)} remains after this order.`}
+            </footer>
+        </article>
     );
 }
-
