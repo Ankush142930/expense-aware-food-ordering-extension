@@ -69,7 +69,7 @@ Users set a monthly food budget in the extension popup. The banner combines that
 ### Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/expense-aware-food-ordering-extension.git
+git clone https://github.com/Ankush142930/expense-aware-food-ordering-extension.git
 cd expense-aware-food-ordering-extension
 ```
 
